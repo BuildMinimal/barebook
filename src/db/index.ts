@@ -5,9 +5,16 @@ import { drizzle, type BetterSQLite3Database } from "drizzle-orm/better-sqlite3"
 import * as schema from "./schema";
 import { dataDir } from "../lib/env";
 
-let _db: BarebookDb | null = null;
+export type BarebookDb = BetterSQLite3Database<typeof schema>;
 
-function openDatabase(): BarebookDb {
+interface DbHandle {
+  db: BarebookDb;
+  sqlite: Database.Database;
+}
+
+let _handle: DbHandle | null = null;
+
+function openDatabase(): DbHandle {
   const dir = dataDir();
   fs.mkdirSync(dir, { recursive: true });
 
@@ -16,23 +23,21 @@ function openDatabase(): BarebookDb {
   sqlite.pragma("foreign_keys = ON");
   sqlite.pragma("busy_timeout = 5000");
 
-  return drizzle(sqlite, { schema });
+  return { db: drizzle(sqlite, { schema }), sqlite };
 }
-
-export type BarebookDb = BetterSQLite3Database<typeof schema>;
 
 /** Process-wide database handle. Opens and configures on first call. */
 export function getDb(): BarebookDb {
-  if (!_db) {
-    _db = openDatabase();
+  if (!_handle) {
+    _handle = openDatabase();
   }
-  return _db;
+  return _handle.db;
 }
 
 /** Test/dev helper: close and forget the cached handle. */
 export function closeDb(): void {
-  if (_db) {
-    _db.$client.close();
-    _db = null;
+  if (_handle) {
+    _handle.sqlite.close();
+    _handle = null;
   }
 }
