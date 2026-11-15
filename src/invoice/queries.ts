@@ -281,6 +281,16 @@ export function nextInvoiceNumber(prefix: string): string {
   return `${prefix}-${String(max + 1).padStart(3, "0")}`;
 }
 
+/** Invoice id for a magic share token, or null. */
+export function invoiceIdByToken(token: string): string | null {
+  const row = getDb()
+    .select({ id: invoices.id })
+    .from(invoices)
+    .where(eq(invoices.shareToken, token))
+    .get();
+  return row?.id ?? null;
+}
+
 /** Value of uninvoiced minutes for a set of entries at their project rates. */
 export function uninvoicedValueMinor(
   entries: { minutes: number; rateMinor: number | null }[],

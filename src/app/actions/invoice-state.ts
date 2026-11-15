@@ -9,16 +9,7 @@ import { invoices, payments } from "@/db/schema";
 import { requireOwner } from "@/lib/auth";
 import { getInvoiceDetail, nextInvoiceNumber } from "@/invoice/queries";
 import { getSetting } from "@/settings/store";
-
-export interface InvoiceActionState {
-  error: string | null;
-  saved: boolean;
-}
-
-export const invoiceActionIdle: InvoiceActionState = {
-  error: null,
-  saved: false,
-};
+import type { InvoiceActionState } from "./time-state";
 
 function revalidateInvoice(id: string) {
   revalidatePath("/invoices");
