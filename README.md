@@ -4,9 +4,10 @@
 
 **Status: v1 feature-complete, in testing.** Deployable via Docker; not yet battle-tested in production.
 
-Barebook is a self-hosted CRM + invoicing app built for freelancers who don't
-want to become accountants. It runs as a single Docker container with a single
-SQLite file - the whole business in one book, backed up by copying one file.
+Barebook is a self-hosted CRM and invoicing app for freelancers — clients,
+time tracking, quotes, invoices, payments, and reminders in one place. It
+deploys as a single Docker container with a single SQLite file: no Redis, no
+Postgres, no terminal, and backups are copying one file.
 
 ## What it does
 
