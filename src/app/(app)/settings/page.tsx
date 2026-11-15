@@ -99,6 +99,28 @@ export default function SettingsPage() {
           <StripeForm hasKey={!!s["stripe_secret_key"]} />
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Your data</CardTitle>
+          <CardDescription>
+            Everything lives in one SQLite file plus uploads.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <a
+            href="/api/backup"
+            className="inline-flex h-8 w-fit items-center justify-center rounded-md border border-border-subtle bg-surface px-3 text-sm font-medium transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Download backup (.zip)
+          </a>
+          <p className="text-2xs text-faint">
+            The archive contains your SMTP and Stripe credentials — store it
+            somewhere safe. Automate off-site copies with cron + the same URL
+            and an auth header, or plain file copies of the data directory.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

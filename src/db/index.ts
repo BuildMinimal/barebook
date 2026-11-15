@@ -34,6 +34,14 @@ export function getDb(): BarebookDb {
   return _handle.db;
 }
 
+/** Raw better-sqlite3 handle — only for backup APIs and tests. */
+export function getRawDb(): Database.Database {
+  if (!_handle) {
+    _handle = openDatabase();
+  }
+  return _handle.sqlite;
+}
+
 /** Test/dev helper: close and forget the cached handle. */
 export function closeDb(): void {
   if (_handle) {
