@@ -3,6 +3,7 @@ import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getDb } from "@/db";
+import { getSessionOwner } from "@/lib/auth";
 import { loadInvoiceForPdf } from "@/invoice/data";
 import { ensureFontsRegistered } from "@/invoice/fonts";
 import { InvoicePdfDocument } from "@/invoice/template";
@@ -14,6 +15,12 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  // Middleware only gates on cookie presence; validate the session here.
+  const owner = await getSessionOwner();
+  if (!owner) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
   const { id } = await params;
 
   const data = loadInvoiceForPdf(id);
