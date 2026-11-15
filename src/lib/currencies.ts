@@ -1,0 +1,23 @@
+/** Common business currencies for the wizard/settings selects. */
+export const CURRENCIES: { code: string; label: string }[] = [
+  { code: "USD", label: "US Dollar ($)" },
+  { code: "EUR", label: "Euro (€)" },
+  { code: "GBP", label: "British Pound (£)" },
+  { code: "INR", label: "Indian Rupee (₹)" },
+  { code: "JPY", label: "Japanese Yen (¥)" },
+  { code: "AUD", label: "Australian Dollar (A$)" },
+  { code: "CAD", label: "Canadian Dollar (C$)" },
+  { code: "CHF", label: "Swiss Franc (CHF)" },
+  { code: "CNY", label: "Chinese Yuan (¥)" },
+  { code: "SGD", label: "Singapore Dollar (S$)" },
+  { code: "HKD", label: "Hong Kong Dollar (HK$)" },
+  { code: "AED", label: "UAE Dirham (AED)" },
+  { code: "SEK", label: "Swedish Krona (kr)" },
+  { code: "NOK", label: "Norwegian Krone (kr)" },
+  { code: "NZD", label: "New Zealand Dollar (NZ$)" },
+  { code: "BRL", label: "Brazilian Real (R$)" },
+  { code: "MXN", label: "Mexican Peso (MX$)" },
+  { code: "ZAR", label: "South African Rand (R)" },
+  { code: "PLN", label: "Polish Złoty (zł)" },
+  { code: "TRY", label: "Turkish Lira (₺)" },
+];
