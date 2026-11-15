@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { invoiceIdByToken, getInvoiceDetail } from "@/invoice/queries";
 import { formatMoney } from "@/lib/money";
-import { getBusinessProfile } from "@/settings/store";
+import { getBusinessProfile, getSetting } from "@/settings/store";
 
 export const metadata: Metadata = { title: "Invoice" };
 export const dynamic = "force-dynamic";
@@ -14,10 +14,13 @@ export const dynamic = "force-dynamic";
  */
 export default async function SharedInvoicePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ token: string }>;
+  searchParams: Promise<{ paid?: string; error?: string }>;
 }) {
   const { token } = await params;
+  const { paid, error } = await searchParams;
   const invoiceId = invoiceIdByToken(token);
   if (!invoiceId) notFound();
 
@@ -30,8 +33,24 @@ export default async function SharedInvoicePage({
   const overdue =
     inv.status === "sent" && !!inv.dueDate && inv.dueDate < today;
 
+  const stripeKey = getSetting("stripe_secret_key");
+  const canPay =
+    !!stripeKey && inv.status !== "void" && inv.balanceMinor > 0;
+
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-14">
+      {paid === "1" ? (
+        <p className="mb-6 rounded-lg border border-border-subtle bg-success-soft px-4 py-3 text-sm text-success" role="status">
+          Payment received — thank you!
+        </p>
+      ) : null}
+      {error === "expired" || error === "stripe" ? (
+        <p className="mb-6 rounded-lg border border-border-subtle bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">
+          {error === "expired"
+            ? "This link has expired."
+            : "Payment could not be verified. If you were charged, please contact us."}
+        </p>
+      ) : null}
       <header className="flex items-start justify-between border-b border-border-subtle pb-6">
         <div>
           <p className="text-base font-semibold">{business.name}</p>
@@ -135,14 +154,27 @@ export default async function SharedInvoicePage({
         <p className="mt-10 whitespace-pre-line text-sm text-muted">{inv.notes}</p>
       ) : null}
 
-      <footer className="mt-12 flex justify-end border-t border-border-subtle pt-6 text-xs text-faint">
-        <a
-          href={`/i/${token}/pdf`}
-          target="_blank"
-          className="inline-flex h-8 items-center rounded-md border border-border-subtle bg-surface px-3 text-xs font-medium text-foreground transition-colors hover:bg-surface-2"
-        >
-          Download PDF
-        </a>
+      <footer className="mt-12 flex items-center justify-between border-t border-border-subtle pt-6 text-xs text-faint">
+        <span>{inv.status === "paid" ? "Paid in full — thank you!" : ""}</span>
+        <div className="flex items-center gap-3">
+          {canPay ? (
+            <form action={`/i/${token}/pay`} method="post">
+              <button
+                type="submit"
+                className="inline-flex h-8 items-center rounded-md bg-accent px-3 text-xs font-medium text-accent-foreground transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                Pay now · {formatMoney(inv.balanceMinor, inv.currency)}
+              </button>
+            </form>
+          ) : null}
+          <a
+            href={`/i/${token}/pdf`}
+            target="_blank"
+            className="inline-flex h-8 items-center rounded-md border border-border-subtle bg-surface px-3 text-xs font-medium text-foreground transition-colors hover:bg-surface-2"
+          >
+            Download PDF
+          </a>
+        </div>
       </footer>
     </main>
   );

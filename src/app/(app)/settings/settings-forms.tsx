@@ -7,6 +7,7 @@ import {
   updateBusinessAction,
   updateInvoicingAction,
   updateSmtpAction,
+  updateStripeAction,
 } from "@/app/actions/settings";
 import { testSmtpAction } from "@/app/actions/email";
 import type { SettingsState } from "@/app/actions/settings-types";
@@ -284,6 +285,43 @@ export function SmtpTestButton() {
           {state.error}
         </span>
       ) : null}
+    </form>
+  );
+}
+
+export function StripeForm({ hasKey }: { hasKey: boolean }) {
+  const [state, formAction, pending] = useActionState(
+    updateStripeAction,
+    invoiceActionIdle,
+  );
+
+  return (
+    <form action={formAction} className="flex flex-col gap-3">
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="stripeKey">Stripe secret key</Label>
+        <Input
+          id="stripeKey"
+          name="stripeKey"
+          type="password"
+          autoComplete="off"
+          placeholder={hasKey ? "Saved — leave blank to keep" : "sk_live_… / sk_test_…"}
+        />
+        <p className="text-2xs text-faint">
+          Your own Stripe key (BYOK). Invoices with a balance get a Pay now
+          button on their share page. Clearing the key disables the button.
+        </p>
+      </div>
+      {state.saved ? (
+        <p className="text-sm text-success" role="status">
+          Saved.
+        </p>
+      ) : null}
+      {state.error ? (
+        <p className="text-sm text-danger" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <SaveButton pending={pending} />
     </form>
   );
 }

@@ -14,6 +14,7 @@ import {
   InvoicingForm,
   SmtpForm,
   SmtpTestButton,
+  StripeForm,
 } from "./settings-forms";
 
 export const metadata: Metadata = { title: "Settings — Barebook" };
@@ -84,6 +85,18 @@ export default function SettingsPage() {
             }}
           />
           <SmtpTestButton />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Payments</CardTitle>
+          <CardDescription>
+            Let clients pay invoices by card through your own Stripe account.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <StripeForm hasKey={!!s["stripe_secret_key"]} />
         </CardContent>
       </Card>
     </div>

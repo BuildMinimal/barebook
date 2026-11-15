@@ -91,7 +91,6 @@ const smtpSchema = z.object({
   smtpPassword: z.string().optional(),
   smtpFrom: z.string().optional(),
 });
-
 export async function updateSmtpAction(
   _prev: SettingsState,
   formData: FormData,
@@ -124,6 +123,33 @@ export async function updateSmtpAction(
   setSetting("smtp_user", parsed.data.smtpUser?.trim() ?? "");
   setSetting("smtp_password", parsed.data.smtpPassword ?? "");
   setSetting("smtp_from", parsed.data.smtpFrom?.trim() ?? "");
+
+  revalidatePath("/settings");
+  return settingsOk;
+}
+
+const stripeSchema = z.object({
+  stripeKey: z.string().optional(),
+});
+
+export async function updateStripeAction(
+  _prev: SettingsState,
+  formData: FormData,
+): Promise<SettingsState> {
+  await requireOwner();
+
+  const parsed = stripeSchema.safeParse({
+    stripeKey: formData.get("stripeKey") ?? "",
+  });
+  if (!parsed.success) {
+    return fail("Check the form");
+  }
+
+  const key = parsed.data.stripeKey?.trim() ?? "";
+  if (key && !key.startsWith("sk_")) {
+    return fail("That doesn't look like a Stripe secret key (should start with sk_)");
+  }
+  setSetting("stripe_secret_key", key);
 
   revalidatePath("/settings");
   return settingsOk;
