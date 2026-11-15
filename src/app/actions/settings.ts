@@ -55,6 +55,8 @@ const invoicingSchema = z.object({
     .string()
     .trim()
     .regex(/^[A-Za-z0-9._-]*$/, "Letters, digits, dots, dashes only"),
+  reminderEnabled: z.enum(["on", "off"]).optional(),
+  reminderDays: z.coerce.number().int().min(1).max(365),
 });
 
 export async function updateInvoicingAction(
@@ -66,6 +68,8 @@ export async function updateInvoicingAction(
   const parsed = invoicingSchema.safeParse({
     taxDefaultPct: formData.get("taxDefaultPct"),
     invoicePrefix: formData.get("invoicePrefix"),
+    reminderEnabled: formData.get("reminderEnabled") ? "on" : "off",
+    reminderDays: formData.get("reminderDays") ?? "3",
   });
   if (!parsed.success) {
     return fail(parsed.error.issues[0]?.message ?? "Check the form");
@@ -73,6 +77,8 @@ export async function updateInvoicingAction(
 
   setSetting("tax_default_bps", String(Math.round(parsed.data.taxDefaultPct * 100)));
   setSetting("invoice_prefix", parsed.data.invoicePrefix);
+  setSetting("reminder_enabled", parsed.data.reminderEnabled === "on" ? "true" : "false");
+  setSetting("reminder_days", String(parsed.data.reminderDays));
 
   revalidatePath("/settings");
   return settingsOk;
@@ -93,11 +99,11 @@ export async function updateSmtpAction(
   await requireOwner();
 
   const parsed = smtpSchema.safeParse({
-    smtpHost: formData.get("smtpHost"),
+    smtpHost: formData.get("smtpHost") ?? "",
     smtpPort: formData.get("smtpPort"),
-    smtpUser: formData.get("smtpUser"),
+    smtpUser: formData.get("smtpUser") ?? "",
     smtpPassword: formData.get("smtpPassword"),
-    smtpFrom: formData.get("smtpFrom"),
+    smtpFrom: formData.get("smtpFrom") ?? "",
   });
   if (!parsed.success) {
     return fail("Check the form");

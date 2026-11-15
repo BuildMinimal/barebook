@@ -121,9 +121,13 @@ export function BusinessForm({
 export function InvoicingForm({
   taxDefaultPct,
   invoicePrefix,
+  reminderEnabled,
+  reminderDays,
 }: {
   taxDefaultPct: string;
   invoicePrefix: string;
+  reminderEnabled: boolean;
+  reminderDays: string;
 }) {
   const [state, formAction, pending] = useActionState(
     updateInvoicingAction,
@@ -151,6 +155,29 @@ export function InvoicingForm({
             id="invoicePrefix"
             name="invoicePrefix"
             defaultValue={invoicePrefix}
+          />
+        </div>
+      </div>
+      <div className="flex items-end gap-4">
+        <label className="flex items-center gap-2 text-sm text-muted">
+          <input
+            type="checkbox"
+            name="reminderEnabled"
+            defaultChecked={reminderEnabled}
+            className="h-4 w-4 accent-[var(--accent)]"
+          />
+          Send overdue reminders automatically
+        </label>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="reminderDays">Days past due</Label>
+          <Input
+            id="reminderDays"
+            name="reminderDays"
+            type="number"
+            min={1}
+            max={365}
+            defaultValue={reminderDays}
+            className="w-24"
           />
         </div>
       </div>

@@ -118,6 +118,8 @@ export const invoices = sqliteTable(
     /** Present = share link active; null = link revoked/never generated. */
     shareToken: text("share_token"),
     paidAt: integer("paid_at", { mode: "timestamp_ms" }),
+    /** Last automated reminder sent (manual reminders don't set this). */
+    lastReminderAt: integer("last_reminder_at", { mode: "timestamp_ms" }),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
       .notNull()
       .$defaultFn(() => new Date()),

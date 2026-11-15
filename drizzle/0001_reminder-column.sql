@@ -1,0 +1,1 @@
+ALTER TABLE `invoices` ADD `last_reminder_at` integer;

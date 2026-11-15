@@ -61,6 +61,8 @@ export default function SettingsPage() {
               Number(s["tax_default_bps"] ?? 0) / 100,
             )}
             invoicePrefix={s["invoice_prefix"] ?? ""}
+            reminderEnabled={s["reminder_enabled"] === "true"}
+            reminderDays={s["reminder_days"] ?? "3"}
           />
         </CardContent>
       </Card>
