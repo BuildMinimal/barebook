@@ -10,6 +10,7 @@ import {
 } from "@/db/schema";
 import { invoiceTotals, lineAmountMinor, type InvoiceTotals } from "@/lib/money";
 import { roundHalfUp } from "@/lib/money";
+import { projectUninvoiced } from "@/lib/queries";
 
 export interface InvoiceSummary {
   id: string;
@@ -289,6 +290,161 @@ export function invoiceIdByToken(token: string): string | null {
     .where(eq(invoices.shareToken, token))
     .get();
   return row?.id ?? null;
+}
+
+export interface DashboardStats {
+  /** Sent, unvoided, not fully paid — converted to business currency. */
+  outstandingMinor: number;
+  /** Payments received in the current calendar month (business timezone). */
+  revenueMtdMinor: number;
+  /** Total uninvoiced billable value across all projects. */
+  uninvoicedValueMinor: number;
+  uninvoicedMinutes: number;
+}
+
+/** Invoice in business currency: total, paid, balance. */
+function invoiceBusinessAmounts(
+  invoiceId: string,
+  currency: string,
+  discountBps: number,
+  fxRate: number,
+): { totalMinor: number; paidMinor: number; balanceMinor: number } {
+  const db = getDb();
+  const lines = db
+    .select({
+      qtyMilli: invoiceLines.qtyMilli,
+      rateMinor: invoiceLines.rateMinor,
+      taxBps: invoiceLines.taxBps,
+    })
+    .from(invoiceLines)
+    .where(eq(invoiceLines.invoiceId, invoiceId))
+    .all();
+
+  const totalMinor = invoiceTotals(
+    lines.map((l) => ({
+      qtyMilli: l.qtyMilli,
+      rateMinor: l.rateMinor,
+      taxBps: l.taxBps,
+    })),
+    discountBps,
+  ).totalMinor;
+
+  const paidInvoiceMinor = db
+    .select({ amount: payments.amountMinor })
+    .from(payments)
+    .where(eq(payments.invoiceId, invoiceId))
+    .all()
+    .reduce((sum, p) => sum + p.amount, 0);
+
+  const fx = fxRate / 1_000_000;
+  return {
+    totalMinor: roundHalfUp(totalMinor * fx),
+    paidMinor: roundHalfUp(paidInvoiceMinor * fx),
+    balanceMinor: Math.max(0, roundHalfUp((totalMinor - paidInvoiceMinor) * fx)),
+  };
+}
+
+export interface OverdueRow {
+  id: string;
+  number: string;
+  clientName: string;
+  dueDate: string;
+  balanceMinor: number;
+  currency: string;
+}
+
+export function dashboardStats(businessTz: string): DashboardStats & {
+  overdue: OverdueRow[];
+} {
+  const db = getDb();
+  const today = new Date().toISOString().slice(0, 10);
+
+  const sentRows = db
+    .select({
+      id: invoices.id,
+      kind: invoices.kind,
+      status: invoices.status,
+      dueDate: invoices.dueDate,
+      currency: invoices.currency,
+      discountBps: invoices.discountBps,
+      fxRate: invoices.fxRate,
+      clientName: clients.name,
+      number: invoices.number,
+    })
+    .from(invoices)
+    .innerJoin(clients, eq(clients.id, invoices.clientId))
+    .all();
+
+  let outstandingMinor = 0;
+  const overdue: OverdueRow[] = [];
+  for (const r of sentRows) {
+    if (r.kind !== "invoice" || r.status !== "sent") continue;
+    const amounts = invoiceBusinessAmounts(r.id, r.currency, r.discountBps, r.fxRate);
+    outstandingMinor += amounts.balanceMinor;
+    if (r.dueDate && r.dueDate < today && amounts.balanceMinor > 0) {
+      overdue.push({
+        id: r.id,
+        number: r.number,
+        clientName: r.clientName,
+        dueDate: r.dueDate,
+        // balance in the invoice's own currency for display
+        balanceMinor: amounts.balanceMinor,
+        currency: r.currency,
+      });
+    }
+  }
+
+  // revenue MTD: payments this calendar month, in business currency
+  const now = new Date();
+  const monthStartStr = new Intl.DateTimeFormat("en-CA", {
+    timeZone: businessTz,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(now)
+    .replace(/\d{2}$/, "01");
+  const monthStart = new Date(`${monthStartStr}T00:00:00Z`);
+
+  const invoiceFx = new Map<string, number>();
+  for (const r of sentRows) invoiceFx.set(r.id, r.fxRate / 1_000_000);
+  const allInvoices = db.select({ id: invoices.id, fxRate: invoices.fxRate }).from(invoices).all();
+  for (const r of allInvoices) invoiceFx.set(r.id, r.fxRate / 1_000_000);
+
+  const revenueMtdMinor = db
+    .select({
+      invoiceId: payments.invoiceId,
+      amount: payments.amountMinor,
+      paidAt: payments.paidAt,
+    })
+    .from(payments)
+    .all()
+    .filter((p) => p.paidAt.getTime() >= monthStart.getTime())
+    .reduce(
+      (sum, p) => sum + roundHalfUp(p.amount * (invoiceFx.get(p.invoiceId) ?? 1)),
+      0,
+    );
+
+  // uninvoiced rollup across projects
+  const projectRows = db
+    .select({ id: projects.id, rate: projects.hourlyRateMinor })
+    .from(projects)
+    .all();
+  let uninvoicedValueMinor = 0;
+  let uninvoicedMinutes = 0;
+  for (const p of projectRows) {
+    const s = projectUninvoiced(p.id, p.rate);
+    uninvoicedValueMinor += s.valueMinor;
+    uninvoicedMinutes += s.minutes;
+  }
+
+  return {
+    outstandingMinor,
+    revenueMtdMinor,
+    uninvoicedValueMinor,
+    uninvoicedMinutes,
+    overdue: overdue.sort((a, b) => a.dueDate.localeCompare(b.dueDate)),
+  };
 }
 
 /** Value of uninvoiced minutes for a set of entries at their project rates. */
