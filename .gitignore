@@ -27,8 +27,18 @@ public/pdf/
 coverage/
 *.tsbuildinfo
 .eslintcache
+next-env.d.ts
+.vercel
+*.pem
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
 # OS
 .DS_Store
+.zcode
 Thumbs.db
 desktop.ini
