@@ -30,6 +30,8 @@ coverage/
 next-env.d.ts
 .vercel
 *.pem
+.zcode
+.playwright-mcp/
 
 # Debug logs
 npm-debug.log*
@@ -39,6 +41,5 @@ yarn-error.log*
 
 # OS
 .DS_Store
-.zcode
 Thumbs.db
 desktop.ini

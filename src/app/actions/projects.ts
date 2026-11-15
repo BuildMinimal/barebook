@@ -51,7 +51,7 @@ export async function createProjectAction(
     clientId: formData.get("clientId"),
     name: formData.get("name"),
     status: "active",
-    notes: formData.get("notes"),
+    notes: formData.get("notes") ?? "",
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form", saved: false };
@@ -94,7 +94,7 @@ export async function updateProjectAction(
     clientId,
     name: formData.get("name"),
     status: formData.get("status") === "archived" ? "archived" : "active",
-    notes: formData.get("notes"),
+    notes: formData.get("notes") ?? "",
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form", saved: false };

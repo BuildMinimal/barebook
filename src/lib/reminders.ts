@@ -22,7 +22,6 @@ export async function sendOverdueReminders(): Promise<number> {
 
   const afterDays = Math.max(1, Number(s["reminder_days"] ?? "3") || 3);
   const businessTz = s["timezone"] ?? "UTC";
-  const today = utcToDateString(new Date(), businessTz);
   const graceDate = new Date();
   graceDate.setDate(graceDate.getDate() - afterDays);
   const graceStr = utcToDateString(graceDate, businessTz);

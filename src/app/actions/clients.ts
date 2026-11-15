@@ -43,12 +43,12 @@ export async function createClientAction(
 
   const parsed = clientSchema.safeParse({
     name: formData.get("name"),
-    company: formData.get("company"),
-    email: formData.get("email"),
-    address: formData.get("address"),
-    taxId: formData.get("taxId"),
+    company: formData.get("company") ?? "",
+    email: formData.get("email") ?? "",
+    address: formData.get("address") ?? "",
+    taxId: formData.get("taxId") ?? "",
     currency: formData.get("currency"),
-    notes: formData.get("notes"),
+    notes: formData.get("notes") ?? "",
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };
@@ -84,12 +84,12 @@ export async function updateClientAction(
 
   const parsed = clientSchema.safeParse({
     name: formData.get("name"),
-    company: formData.get("company"),
-    email: formData.get("email"),
-    address: formData.get("address"),
-    taxId: formData.get("taxId"),
+    company: formData.get("company") ?? "",
+    email: formData.get("email") ?? "",
+    address: formData.get("address") ?? "",
+    taxId: formData.get("taxId") ?? "",
     currency: formData.get("currency"),
-    notes: formData.get("notes"),
+    notes: formData.get("notes") ?? "",
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check the form" };

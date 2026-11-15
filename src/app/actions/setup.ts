@@ -95,8 +95,8 @@ export async function setupDetailsAction(
   await requireOwner();
 
   const parsed = detailsSchema.safeParse({
-    businessAddress: formData.get("businessAddress"),
-    businessTaxId: formData.get("businessTaxId"),
+    businessAddress: formData.get("businessAddress") ?? "",
+    businessTaxId: formData.get("businessTaxId") ?? "",
     taxDefaultPct: formData.get("taxDefaultPct") ?? "0",
     invoicePrefix: formData.get("invoicePrefix"),
   });

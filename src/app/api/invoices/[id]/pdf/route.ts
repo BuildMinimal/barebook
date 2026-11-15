@@ -2,7 +2,6 @@ import * as React from "react";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { getDb } from "@/db";
 import { getSessionOwner } from "@/lib/auth";
 import { loadInvoiceForPdf } from "@/invoice/data";
 import { ensureFontsRegistered } from "@/invoice/fonts";
