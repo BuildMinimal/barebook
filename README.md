@@ -1,0 +1,43 @@
+# Barebook
+
+> The bare-necessities freelancer CRM. Clients, work, and money in one book.
+
+**Status: pre-alpha - in active development, nothing installable yet.**
+
+Barebook is a self-hosted CRM + invoicing app built for freelancers who don't
+want to become accountants. It runs as a single Docker container with a single
+SQLite file - the whole business in one book, backed up by copying one file.
+
+## What it does
+
+| Area | v1 |
+|---|---|
+| Clients | Contact book with notes; every invoice and hour traces back to a client |
+| Work | Projects + time entries with a one-click timer; billable hours feed invoices |
+| Invoices | Line items, per-line tax, discounts, per-invoice currency; quote → invoice conversion |
+| Getting paid | Payments log, optional Stripe "Pay now" button (your own Stripe key), PDF invoices, email via your own SMTP |
+| Clients never log in | Every invoice gets a magic share link |
+| Dashboard | Outstanding invoices, revenue this month, who to nudge |
+| Reminders | Overdue invoice nudges via built-in scheduler |
+
+## Why self-host it
+
+- **Your client and billing data stays yours** - no SaaS subscription that outlives your freelance career
+- **No per-seat pricing** - it's your VPS, one user, one price
+- **One-file backups** - SQLite WAL; `cp barebook.db backup.db` and you're done
+
+## Deployment (planned)
+
+- Single `docker-compose.yml` in repo root - built for [Hostinger's Docker Manager](https://www.hostinger.com/support/12040789-hostinger-docker-manager-for-vps-simplify-your-container-deployments) and any compose-capable host
+- First-run setup wizard: owner account → business profile → currency/tax → SMTP. No terminal required.
+- ~200 MB RAM - comfortable on an entry-level VPS
+
+## Docs
+
+- [Product scope - v1](docs/product-scope.md)
+- [Architecture](docs/architecture.md)
+- [Brand](docs/brand.md)
+
+## License
+
+MIT (planned, at first public release).

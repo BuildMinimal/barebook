@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+build/
+
+# Env & secrets - never commit
+.env
+.env.*
+!.env.example
+
+# App data - user's business data lives here, never commit
+data/
+*.db
+*.db-wal
+*.db-shm
+uploads/
+
+# Generated PDFs
+public/pdf/
+*.pdf
+
+# Tooling
+coverage/
+*.tsbuildinfo
+.eslintcache
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
