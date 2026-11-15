@@ -2,7 +2,7 @@
 
 > The bare-necessities freelancer CRM. Clients, work, and money in one book.
 
-**Status: pre-alpha - in active development, nothing installable yet.**
+**Status: v1 feature-complete, in testing.** Deployable via Docker; not yet battle-tested in production.
 
 Barebook is a self-hosted CRM + invoicing app built for freelancers who don't
 want to become accountants. It runs as a single Docker container with a single
@@ -26,11 +26,13 @@ SQLite file - the whole business in one book, backed up by copying one file.
 - **No per-seat pricing** - it's your VPS, one user, one price
 - **One-file backups** - SQLite WAL; `cp barebook.db backup.db` and you're done
 
-## Deployment (planned)
+## Deployment
 
 - Single `docker-compose.yml` in repo root - built for [Hostinger's Docker Manager](https://www.hostinger.com/support/12040789-hostinger-docker-manager-for-vps-simplify-your-container-deployments) and any compose-capable host
 - First-run setup wizard: owner account → business profile → currency/tax → SMTP. No terminal required.
 - ~200 MB RAM - comfortable on an entry-level VPS
+
+See [docs/deploy.md](docs/deploy.md) for the full guide: Hostinger steps, upgrades, backups, restore, and the health endpoint.
 
 ## Docs
 
