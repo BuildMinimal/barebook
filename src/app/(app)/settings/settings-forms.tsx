@@ -1,14 +1,14 @@
 "use client";
 
 import { useActionState } from "react";
-import {
-  settingsIdle,
-} from "@/app/actions/settings-state";
+import { invoiceActionIdle } from "@/app/actions/time-state";
+import { settingsIdle } from "@/app/actions/settings-state";
 import {
   updateBusinessAction,
   updateInvoicingAction,
   updateSmtpAction,
 } from "@/app/actions/settings";
+import { testSmtpAction } from "@/app/actions/email";
 import type { SettingsState } from "@/app/actions/settings-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -232,6 +232,31 @@ export function SmtpForm({
       </p>
       <Status state={state} />
       <SaveButton pending={pending} />
+    </form>
+  );
+}
+
+export function SmtpTestButton() {
+  const [state, formAction, pending] = useActionState(
+    testSmtpAction,
+    invoiceActionIdle,
+  );
+
+  return (
+    <form action={formAction} className="flex items-center gap-3">
+      <Button type="submit" size="sm" variant="secondary" disabled={pending}>
+        {pending ? "Testing…" : "Test connection"}
+      </Button>
+      {state.saved ? (
+        <span className="text-sm text-success" role="status">
+          SMTP connected.
+        </span>
+      ) : null}
+      {state.error ? (
+        <span className="text-sm text-danger" role="alert">
+          {state.error}
+        </span>
+      ) : null}
     </form>
   );
 }

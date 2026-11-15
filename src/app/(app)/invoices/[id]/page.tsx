@@ -28,6 +28,7 @@ import {
   InvoiceMetaForm,
 } from "./invoice-forms";
 import { PaymentForm } from "./payment-form";
+import { EmailInvoiceButton, ReminderButton } from "./email-actions";
 
 export const metadata: Metadata = { title: "Invoice — Barebook" };
 
@@ -78,6 +79,12 @@ export default async function InvoiceEditorPage({
           >
             PDF
           </a>
+          {inv.status === "sent" || inv.status === "paid" ? (
+            <EmailInvoiceButton invoiceId={inv.id} />
+          ) : null}
+          {inv.status === "sent" && inv.balanceMinor > 0 ? (
+            <ReminderButton invoiceId={inv.id} />
+          ) : null}
           {editable ? (
             <form action={markSentAction}>
               <input type="hidden" name="id" value={inv.id} />

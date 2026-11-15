@@ -13,6 +13,7 @@ import {
   BusinessForm,
   InvoicingForm,
   SmtpForm,
+  SmtpTestButton,
 } from "./settings-forms";
 
 export const metadata: Metadata = { title: "Settings — Barebook" };
@@ -71,7 +72,7 @@ export default function SettingsPage() {
             Your own SMTP account — used to send invoices and reminders.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-3">
           <SmtpForm
             values={{
               smtpHost: s["smtp_host"] ?? "",
@@ -80,6 +81,7 @@ export default function SettingsPage() {
               smtpFrom: s["smtp_from"] ?? "",
             }}
           />
+          <SmtpTestButton />
         </CardContent>
       </Card>
     </div>
