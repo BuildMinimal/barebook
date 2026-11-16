@@ -4,15 +4,16 @@ const nextConfig: NextConfig = {
   // Single-container deploy: .next/standalone carries a minimal server.
   output: "standalone",
 
-  // Node-only packages must not be bundled by Turbopack — native addons and
-  // CJS libraries break under the bundler's ESM interop.
+  // Production builds use webpack (see package.json): turbopack builds drop
+  // route handlers from the runtime manifest, so PDFs, Stripe, backup and the
+  // health endpoint 404 in the shipped image. External packages stay out of
+  // the bundle — native addons and heavy CJS libraries.
   serverExternalPackages: [
     "better-sqlite3",
     "@react-pdf/renderer",
     "nodemailer",
     "stripe",
     "node-cron",
-    "archiver",
   ],
 
   // Fonts are loaded from disk at runtime by the PDF engine; make sure the

@@ -6,19 +6,22 @@
  * business day (see src/lib/reminders.ts).
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME !== "nodejs") return;
+  // Positive-form guard: the bundler eliminates the non-node branch before
+  // module resolution — the inverted form pulls node-only code into the edge
+  // build (webpack fails on better-sqlite3 there).
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    const { runMigrations } = await import("./db/migrate");
+    runMigrations();
 
-  const { runMigrations } = await import("./db/migrate");
-  runMigrations();
+    if (process.env.BAREBOOK_DISABLE_CRON === "1") return;
 
-  if (process.env.BAREBOOK_DISABLE_CRON === "1") return;
+    const cron = (await import("node-cron")).default;
+    const { sendOverdueReminders } = await import("./lib/reminders");
 
-  const cron = (await import("node-cron")).default;
-  const { sendOverdueReminders } = await import("./lib/reminders");
-
-  cron.schedule("5 * * * *", () => {
-    sendOverdueReminders().catch((err) => {
-      console.error("[reminders] failed:", err);
+    cron.schedule("5 * * * *", () => {
+      sendOverdueReminders().catch((err) => {
+        console.error("[reminders] failed:", err);
+      });
     });
-  });
+  }
 }
