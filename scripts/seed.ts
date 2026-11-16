@@ -116,8 +116,8 @@ db.insert(invoices)
     status: "sent",
     number: "2026-001",
     currency: "USD",
-    issueDate: dateStr(daysAgo(10)),
-    dueDate: dateStr(daysAgo(-4)), // 4 days from now
+    issueDate: dateStr(daysAgo(14)),
+    dueDate: dateStr(daysAgo(2)), // overdue: shows the dashboard nudge table
     notes: "Thanks for your business!",
     shareToken: "demo-share-token-001",
   })
@@ -189,7 +189,7 @@ db.insert(payments)
   .values({
     id: randomUUID(),
     invoiceId: inv1,
-    paidAt: daysAgo(5),
+    paidAt: daysAgo(6),
     amountMinor: 50000, // $500.00
     method: "bank_transfer",
     note: "Advance on receipt of invoice",
