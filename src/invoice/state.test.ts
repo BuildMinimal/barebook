@@ -12,7 +12,7 @@ import {
   revokeShareTokenAction,
   voidInvoiceAction,
 } from "@/app/actions/invoice-state";
-import { seedInvoice, seedPayment, useTestDb } from "@/test/db";
+import { seedInvoice, seedPayment, initTestDb } from "@/test/db";
 
 // Server actions touch Next request scope; the state machine under test
 // doesn't need real auth or revalidation.
@@ -21,7 +21,7 @@ vi.mock("@/lib/auth", () => ({
   requireOwner: vi.fn(async () => ({ id: "owner-1", email: "owner@barebook.test" })),
 }));
 
-useTestDb();
+initTestDb();
 
 function fd(values: Record<string, string>): FormData {
   const form = new FormData();

@@ -20,7 +20,7 @@ type InvoiceStatus = typeof invoices.$inferInsert["status"];
 /**
  * Test harness: a fresh SQLite database per test file.
  *
- * Call useTestDb() at the top level of a *.test.ts file. It points DATA_DIR at
+ * Call initTestDb() at the top level of a *.test.ts file. It points DATA_DIR at
  * a throwaway temp dir and runs the real migrations before the tests run —
  * every getDb() in the code under test then hits that database.
  */
@@ -50,7 +50,7 @@ export interface SeedInvoice {
   lines?: SeedLine[];
 }
 
-export function useTestDb(): void {
+export function initTestDb(): void {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "barebook-test-"));
 
   beforeAll(() => {

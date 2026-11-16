@@ -6,10 +6,10 @@ import {
   seedPayment,
   seedProject,
   seedTimeEntry,
-  useTestDb,
+  initTestDb,
 } from "@/test/db";
 
-useTestDb();
+initTestDb();
 
 // Frozen clock: dashboard "today" is always 2026-11-17.
 beforeEach(() => {

@@ -12,10 +12,10 @@ import {
   seedPayment,
   seedProject,
   seedTimeEntry,
-  useTestDb,
+  initTestDb,
 } from "@/test/db";
 
-useTestDb();
+initTestDb();
 
 describe("getInvoiceDetail", () => {
   it("computes totals, paid, and balance for a simple invoice", () => {
