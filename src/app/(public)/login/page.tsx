@@ -4,6 +4,8 @@ import { hasOwner } from "@/lib/setup";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Sign in — Barebook" };
+// DB-backed (checks for an owner) — must not prerender at build time.
+export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
   // No owner yet? The setup wizard is the entry point.

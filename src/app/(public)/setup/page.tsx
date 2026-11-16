@@ -8,6 +8,8 @@ import { SetupAccountForm } from "./setup-account-form";
 import { SetupDetailsForm } from "./setup-details-form";
 
 export const metadata: Metadata = { title: "Setup — Barebook" };
+// DB-backed (checks for an owner) — must not prerender at build time.
+export const dynamic = "force-dynamic";
 
 export type CurrencyOption = { code: string; label: string };
 

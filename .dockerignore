@@ -1,0 +1,11 @@
+# Keep dev machines out of the image: user data must never ride along in a
+# build layer, and a populated dev db would mask prerender bugs (see the
+# force-dynamic exports on the public pages).
+node_modules/
+.next/
+data/
+uploads/
+public/pdf/
+.git/
+.env
+.env.*
