@@ -4,6 +4,8 @@
 
 **Status: v1 feature-complete, in testing.** Deployable via Docker; not yet battle-tested in production.
 
+![Mark a draft invoice sent and generate its client-facing share link](docs/screenshots/invoice-send.gif)
+
 Barebook is a self-hosted CRM and invoicing app for freelancers — clients,
 time tracking, quotes, invoices, payments, and reminders in one place. It
 deploys as a single Docker container with a single SQLite file: no Redis, no
@@ -20,6 +22,13 @@ Postgres, no terminal, and backups are copying one file.
 | Clients never log in | Every invoice gets a magic share link |
 | Dashboard | Outstanding invoices, revenue this month, who to nudge |
 | Reminders | Overdue invoice nudges via built-in scheduler |
+
+## Screenshots
+
+| The daily loop | Getting paid |
+|---|---|
+| ![Dashboard — outstanding, revenue, uninvoiced, who to nudge](docs/screenshots/dashboard.png) | ![Invoice detail — tax lines, balance, payments, share link](docs/screenshots/invoice-detail.png) |
+| ![Client-facing share page — no login needed](docs/screenshots/share-page.png) | ![Time tracking — timer and uninvoiced rollup](docs/screenshots/time.png) |
 
 ## Why self-host it
 
