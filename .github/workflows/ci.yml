@@ -1,0 +1,36 @@
+# Lint, typecheck, test, and build every push to main and every PR.
+# The build step is the one that caught prerender/db bugs before — keep it.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+      # Fresh DATA_DIR: a build must never depend on existing local data.
+      - run: npm run build
+        env:
+          DATA_DIR: /tmp/barebook-ci-data
