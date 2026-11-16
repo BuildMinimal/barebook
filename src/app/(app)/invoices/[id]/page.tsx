@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
+import { ArrowLeft } from "lucide-react";
 import { getInvoiceDetail } from "@/invoice/queries";
 import { formatDate } from "@/lib/datetime";
 import { formatMoney } from "@/lib/money";
@@ -278,7 +279,9 @@ export default async function InvoiceEditorPage({
                 <form action={deletePaymentAction}>
                   <input type="hidden" name="invoiceId" value={inv.id} />
                   <input type="hidden" name="paymentId" value={p.id} />
-                  <ConfirmSubmit message="Remove this payment record?">✕</ConfirmSubmit>
+                  <ConfirmSubmit message="Remove this payment record?" iconOnly>
+                    Remove
+                  </ConfirmSubmit>
                 </form>
               </div>
             ))}
@@ -324,9 +327,10 @@ export default async function InvoiceEditorPage({
         </Card>
       </section>
 
-      <p className="text-xs text-faint">
-        <Link href="/invoices" className="hover:underline">
-          ← All invoices
+      <p className="flex items-center gap-1 text-xs text-faint">
+        <Link href="/invoices" className="flex items-center gap-1 hover:underline">
+          <ArrowLeft size={13} aria-hidden="true" />
+          All invoices
         </Link>
       </p>
     </div>

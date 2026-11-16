@@ -226,8 +226,9 @@ export default async function TimePage() {
                         <ConfirmSubmit
                           message="Delete this time entry?"
                           title="Delete entry"
+                          iconOnly
                         >
-                          ✕
+                          Delete
                         </ConfirmSubmit>
                       </form>
                     ) : null}

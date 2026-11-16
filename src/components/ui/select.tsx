@@ -2,9 +2,12 @@ import type { SelectHTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
 
 /**
- * Native select styled to match Input. Radix Select comes later only where
- * search/typeahead is genuinely needed (e.g. client picker on invoices);
- * for plain choices the native control is lighter and keyboard-perfect.
+ * Native select styled to match Input. The background chevron is lucide's
+ * chevron-down path inlined as a data URI (a background image is the only
+ * way to style the native control's arrow). Radix Select comes later only
+ * where search/typeahead is genuinely needed (e.g. client picker on
+ * invoices); for plain choices the native control is lighter and
+ * keyboard-perfect.
  */
 export function Select({
   className,

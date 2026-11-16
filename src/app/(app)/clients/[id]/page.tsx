@@ -11,6 +11,7 @@ import { getDb } from "@/db";
 import { clients, projects } from "@/db/schema";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmSubmit } from "@/components/ui/confirm-submit";
+import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { projectUninvoiced } from "@/lib/queries";
 import { ClientForm } from "../client-form";
 import { EditProjectForm, NewProjectForm } from "./project-forms";
@@ -111,8 +112,14 @@ export default async function ClientDetailPage({
                       ) : (
                         <span className="text-2xs">no uninvoiced time</span>
                       )}
-                      <span className="text-faint group-open:hidden">edit ▾</span>
-                      <span className="hidden text-faint group-open:inline">close ▴</span>
+                      <span className="text-faint group-open:hidden">
+                        <ChevronDown size={13} aria-hidden="true" className="inline" />
+                        <span className="sr-only">edit</span>
+                      </span>
+                      <span className="hidden text-faint group-open:inline">
+                        <ChevronUp size={13} aria-hidden="true" />
+                        <span className="sr-only">close</span>
+                      </span>
                     </span>
                   </summary>
                   <div className="border-t border-border-subtle px-5 pb-4">
@@ -134,9 +141,10 @@ export default async function ClientDetailPage({
         )}
       </section>
 
-      <p className="text-xs text-faint">
-        <Link href="/clients" className="hover:underline">
-          ← All clients
+      <p className="flex items-center gap-1 text-xs text-faint">
+        <Link href="/clients" className="flex items-center gap-1 hover:underline">
+          <ArrowLeft size={13} aria-hidden="true" />
+          All clients
         </Link>
       </p>
     </div>
