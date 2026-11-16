@@ -302,13 +302,12 @@ export interface DashboardStats {
   uninvoicedMinutes: number;
 }
 
-/** Invoice in business currency: total, paid, balance. */
+/** Invoice amounts: balance in business currency and in the invoice's own. */
 function invoiceBusinessAmounts(
   invoiceId: string,
-  currency: string,
   discountBps: number,
   fxRate: number,
-): { totalMinor: number; paidMinor: number; balanceMinor: number } {
+): { totalMinor: number; paidMinor: number; balanceMinor: number; balanceInvoiceMinor: number } {
   const db = getDb();
   const lines = db
     .select({
@@ -341,6 +340,7 @@ function invoiceBusinessAmounts(
     totalMinor: roundHalfUp(totalMinor * fx),
     paidMinor: roundHalfUp(paidInvoiceMinor * fx),
     balanceMinor: Math.max(0, roundHalfUp((totalMinor - paidInvoiceMinor) * fx)),
+    balanceInvoiceMinor: Math.max(0, totalMinor - paidInvoiceMinor),
   };
 }
 
@@ -379,16 +379,16 @@ export function dashboardStats(businessTz: string): DashboardStats & {
   const overdue: OverdueRow[] = [];
   for (const r of sentRows) {
     if (r.kind !== "invoice" || r.status !== "sent") continue;
-    const amounts = invoiceBusinessAmounts(r.id, r.currency, r.discountBps, r.fxRate);
+    const amounts = invoiceBusinessAmounts(r.id, r.discountBps, r.fxRate);
     outstandingMinor += amounts.balanceMinor;
-    if (r.dueDate && r.dueDate < today && amounts.balanceMinor > 0) {
+    if (r.dueDate && r.dueDate < today && amounts.balanceInvoiceMinor > 0) {
       overdue.push({
         id: r.id,
         number: r.number,
         clientName: r.clientName,
         dueDate: r.dueDate,
-        // balance in the invoice's own currency for display
-        balanceMinor: amounts.balanceMinor,
+        // the overdue table shows the invoice's own currency next to its balance
+        balanceMinor: amounts.balanceInvoiceMinor,
         currency: r.currency,
       });
     }
